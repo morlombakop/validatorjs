@@ -1,4 +1,5 @@
 const Messages = require('./messages');
+const en = require('./lang/en');
 
 const require_method = require;
 
@@ -42,13 +43,16 @@ const container = {
    */
   _load: function(lang) {
     if (!this.messages[lang]) {
+      let rawMessages;
       try {
-        const rawMessages = require_method('./lang/' + lang);
-        this._set(lang, rawMessages);
+        rawMessages = require('./lang/' + lang);
       } catch (e) {
         const logger = console;
-        logger.error('_load error', e);
+        logger.error('_load error ****', e);
       }
+
+      const mes = rawMessages ? rawMessages : en;
+      this._set(lang, mes);
     }
   },
 
