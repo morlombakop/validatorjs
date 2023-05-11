@@ -1,14 +1,13 @@
-var Attributes = require('./attributes');
+/* eslint-disable no-prototype-builtins */
+const Attributes = require('./attributes');
 
-var Messages = function(lang, messages) {
-  this.lang = lang;
-  this.messages = messages;
-  this.customMessages = {};
-  this.attributeNames = {};
-};
-
-Messages.prototype = {
-  constructor: Messages,
+class Messages {
+  constructor(lang, messages) {
+    this.lang = lang;
+    this.messages = messages;
+    this.customMessages = {};
+    this.attributeNames = {};
+  }
 
   /**
    * Set custom messages
@@ -16,18 +15,18 @@ Messages.prototype = {
    * @param {object} customMessages
    * @return {void}
    */
-  _setCustom: function(customMessages) {
+  _setCustom(customMessages) {
     this.customMessages = customMessages || {};
-  },
+  }
 
   /**
    * Set custom attribute names.
    *
    * @param {object} attributes
    */
-  _setAttributeNames: function(attributes) {
+  _setAttributeNames(attributes) {
     this.attributeNames = attributes;
-  },
+  }
 
   /**
    * Set the attribute formatter.
@@ -35,9 +34,9 @@ Messages.prototype = {
    * @param {fuction} func
    * @return {void}
    */
-  _setAttributeFormatter: function(func) {
+  _setAttributeFormatter(func) {
     this.attributeFormatter = func;
-  },
+  }
 
   /**
    * Get attribute name to display.
@@ -45,8 +44,8 @@ Messages.prototype = {
    * @param  {string} attribute
    * @return {string}
    */
-  _getAttributeName: function(attribute) {
-    var name = attribute;
+  _getAttributeName(attribute) {
+    let name = attribute;
     if (this.attributeNames.hasOwnProperty(attribute)) {
       return this.attributeNames[attribute];
     } else if (this.messages.attributes.hasOwnProperty(attribute)) {
@@ -58,16 +57,16 @@ Messages.prototype = {
     }
 
     return name;
-  },
+  }
 
   /**
    * Get all messages
    *
    * @return {object}
    */
-  all: function() {
+  all() {
     return this.messages;
-  },
+  }
 
   /**
    * Render message
@@ -75,13 +74,13 @@ Messages.prototype = {
    * @param  {Rule} rule
    * @return {string}
    */
-  render: function(rule) {
+  render(rule) {
     if (rule.customMessage) {
       return rule.customMessage;
     }
-    var template = this._getTemplate(rule);
+    const template = this._getTemplate(rule);
 
-    var message;
+    let message;
     if (Attributes.replacements[rule.name]) {
       message = Attributes.replacements[rule.name].apply(this, [template, rule]);
     } else {
@@ -89,7 +88,7 @@ Messages.prototype = {
     }
 
     return message;
-  },
+  }
 
   /**
    * Get the template to use for given rule
@@ -97,14 +96,13 @@ Messages.prototype = {
    * @param  {Rule} rule
    * @return {string}
    */
-  _getTemplate: function(rule) {
+  _getTemplate(rule) {
+    const messages = this.messages;
+    let template = messages.def;
+    const customMessages = this.customMessages;
+    const formats = [rule.name + '.' + rule.attribute, rule.name];
 
-    var messages = this.messages;
-    var template = messages.def;
-    var customMessages = this.customMessages;
-    var formats = [rule.name + '.' + rule.attribute, rule.name];
-
-    for (var i = 0, format; i < formats.length; i++) {
+    for (let i = 0, format; i < formats.length; i++) {
       format = formats[i];
       if (customMessages.hasOwnProperty(format)) {
         template = customMessages[format];
@@ -120,7 +118,7 @@ Messages.prototype = {
     }
 
     return template;
-  },
+  }
 
   /**
    * Replace placeholders in the template using the data object
@@ -130,8 +128,8 @@ Messages.prototype = {
    * @param  {object} data
    * @return {string}
    */
-  _replacePlaceholders: function(rule, template, data) {
-    var message, attribute;
+  _replacePlaceholders(rule, template, data) {
+    let message, attribute;
 
     data.attribute = this._getAttributeName(rule.attribute);
     data[rule.name] = data[rule.name] || rule.getParameters().join(',');
@@ -146,7 +144,6 @@ Messages.prototype = {
 
     return message;
   }
-
-};
+}
 
 module.exports = Messages;

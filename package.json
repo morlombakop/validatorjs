@@ -3,6 +3,18 @@
   "description": "Validation library inspired by Laravel's Validator",
   "version": "3.22.1",
   "author": "David <david@thejsguy.com>",
+  "engines": {
+    "node": "^18"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "maintainers": [
+    {
+      "name": "Morlo Mbakop",
+      "email": "m.mbakop@instamotion.com"
+    }
+  ],
   "contributors": [
     {
       "name": "Mike Erickson",
@@ -17,15 +29,12 @@
       "email": "lapkom@gmail.com"
     }
   ],
-  "license": "MIT",
-  "main": "./src/validator.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mikeerickson/validatorjs"
+    "url": "https://github.com/instamotion/unzip-stream.git"
   },
-  "bugs": {
-    "url": "https://github.com/mikeerickson/validatorjs/issues?labels=bug&milestone=1&page=1&state=open"
-  },
+  "license": "MIT",
+  "main": "./src/validator.js",
   "keywords": [
     "codedungeon",
     "validatorjs",
@@ -41,7 +50,7 @@
   "devDependencies": {
     "browserify": "^13.0.1",
     "chai": "~3.5.0",
-    "eslint": "5.8.0",
+    "eslint": "^8.40.0",
     "grunt": "1.0.4",
     "grunt-browserify": "^5.0.0",
     "grunt-cli": "^1.2.0",

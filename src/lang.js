@@ -1,10 +1,8 @@
-var Messages = require('./messages');
+const Messages = require('./messages');
 
-require('./lang/en');
+const require_method = require;
 
-var require_method = require;
-
-var container = {
+const container = {
 
   messages: {},
 
@@ -45,9 +43,12 @@ var container = {
   _load: function(lang) {
     if (!this.messages[lang]) {
       try {
-        var rawMessages = require_method('./lang/' + lang);
+        const rawMessages = require_method('./lang/' + lang);
         this._set(lang, rawMessages);
-      } catch (e) {}
+      } catch (e) {
+        const logger = console;
+        logger.error('_load error', e);
+      }
     }
   },
 
@@ -70,6 +71,7 @@ var container = {
    */
   _make: function(lang) {
     this._load(lang);
+
     return new Messages(lang, this.messages[lang]);
   }
 

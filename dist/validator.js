@@ -1,16 +1,15 @@
-/*! validatorjs - 2020-12-03 */
+/*! validatorjs - 2023-05-11 */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Validator = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-function AsyncResolvers(onFailedOne, onResolvedAll) {
-  this.onResolvedAll = onResolvedAll;
-  this.onFailedOne = onFailedOne;
-  this.resolvers = {};
-  this.resolversCount = 0;
-  this.passed = [];
-  this.failed = [];
-  this.firing = false;
-}
-
-AsyncResolvers.prototype = {
+class AsyncResolvers {
+  constructor(onFailedOne, onResolvedAll) {
+    this.onResolvedAll = onResolvedAll;
+    this.onFailedOne = onFailedOne;
+    this.resolvers = {};
+    this.resolversCount = 0;
+    this.passed = [];
+    this.failed = [];
+    this.firing = false;
+  }
 
   /**
    * Add resolver
@@ -18,12 +17,12 @@ AsyncResolvers.prototype = {
    * @param {Rule} rule
    * @return {integer}
    */
-  add: function(rule) {
-    var index = this.resolversCount;
+  add(rule) {
+    const index = this.resolversCount;
     this.resolvers[index] = rule;
     this.resolversCount++;
     return index;
-  },
+  }
 
   /**
    * Resolve given index
@@ -31,8 +30,8 @@ AsyncResolvers.prototype = {
    * @param  {integer} index
    * @return {void}
    */
-  resolve: function(index) {
-    var rule = this.resolvers[index];
+  resolve(index) {
+    const rule = this.resolvers[index];
     if (rule.passes === true) {
       this.passed.push(rule);
     } else if (rule.passes === false) {
@@ -41,23 +40,23 @@ AsyncResolvers.prototype = {
     }
 
     this.fire();
-  },
+  }
 
   /**
    * Determine if all have been resolved
    *
    * @return {boolean}
    */
-  isAllResolved: function() {
+  isAllResolved() {
     return (this.passed.length + this.failed.length) === this.resolversCount;
-  },
+  }
 
   /**
    * Attempt to fire final all resolved callback if completed
    *
    * @return {void}
    */
-  fire: function() {
+  fire() {
 
     if (!this.firing) {
       return;
@@ -67,23 +66,22 @@ AsyncResolvers.prototype = {
       this.onResolvedAll(this.failed.length === 0);
     }
 
-  },
+  }
 
   /**
    * Enable firing
    *
    * @return {void}
    */
-  enableFiring: function() {
+  enableFiring() {
     this.firing = true;
   }
-
-};
+}
 
 module.exports = AsyncResolvers;
 
 },{}],2:[function(require,module,exports){
-var replacements = {
+const replacements = {
 
   /**
    * Between replacement (replaces :min and :max)
@@ -92,8 +90,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  between: function(template, rule) {
-    var parameters = rule.getParameters();
+  between: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       min: parameters[0],
       max: parameters[1]
@@ -107,8 +105,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  digits_between: function(template, rule) {
-    var parameters = rule.getParameters();
+  digits_between: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       min: parameters[0],
       max: parameters[1]
@@ -122,8 +120,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  required_if: function(template, rule) {
-    var parameters = rule.getParameters();
+  required_if: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       other: this._getAttributeName(parameters[0]),
       value: parameters[1]
@@ -137,8 +135,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  required_unless: function(template, rule) {
-    var parameters = rule.getParameters();
+  required_unless: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       other: this._getAttributeName(parameters[0]),
       value: parameters[1]
@@ -152,8 +150,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  required_with: function(template, rule) {
-    var parameters = rule.getParameters();
+  required_with: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       field: this._getAttributeName(parameters[0])
     });
@@ -166,9 +164,9 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  required_with_all: function(template, rule) {
-    var parameters = rule.getParameters();
-    var getAttributeName = this._getAttributeName.bind(this);
+  required_with_all: function (template, rule) {
+    const parameters = rule.getParameters();
+    const getAttributeName = this._getAttributeName.bind(this);
     return this._replacePlaceholders(rule, template, {
       fields: parameters.map(getAttributeName).join(', ')
     });
@@ -181,8 +179,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  required_without: function(template, rule) {
-    var parameters = rule.getParameters();
+  required_without: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       field: this._getAttributeName(parameters[0])
     });
@@ -195,9 +193,9 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  required_without_all: function(template, rule) {
-    var parameters = rule.getParameters();
-    var getAttributeName = this._getAttributeName.bind(this);
+  required_without_all: function (template, rule) {
+    const parameters = rule.getParameters();
+    const getAttributeName = this._getAttributeName.bind(this);
     return this._replacePlaceholders(rule, template, {
       fields: parameters.map(getAttributeName).join(', ')
     });
@@ -210,8 +208,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  after: function(template, rule) {
-    var parameters = rule.getParameters();
+  after: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       after: this._getAttributeName(parameters[0])
     });
@@ -224,8 +222,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  before: function(template, rule) {
-    var parameters = rule.getParameters();
+  before: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       before: this._getAttributeName(parameters[0])
     });
@@ -238,8 +236,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  after_or_equal: function(template, rule) {
-    var parameters = rule.getParameters();
+  after_or_equal: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       after_or_equal: this._getAttributeName(parameters[0])
     });
@@ -252,8 +250,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  before_or_equal: function(template, rule) {
-    var parameters = rule.getParameters();
+  before_or_equal: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       before_or_equal: this._getAttributeName(parameters[0])
     });
@@ -266,8 +264,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  same: function(template, rule) {
-    var parameters = rule.getParameters();
+  same: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       same: this._getAttributeName(parameters[0])
     });
@@ -284,12 +282,10 @@ module.exports = {
 };
 
 },{}],3:[function(require,module,exports){
-var Errors = function() {
-  this.errors = {};
-};
-
-Errors.prototype = {
-  constructor: Errors,
+class Errors {
+  constructor() {
+    this.errors = {};
+  }
 
   /**
    * Add new error message for given attribute
@@ -298,7 +294,7 @@ Errors.prototype = {
    * @param  {string} message
    * @return {void}
    */
-  add: function(attribute, message) {
+  add(attribute, message) {
     if (!this.has(attribute)) {
       this.errors[attribute] = [];
     }
@@ -306,7 +302,7 @@ Errors.prototype = {
     if (this.errors[attribute].indexOf(message) === -1) {
       this.errors[attribute].push(message);
     }
-  },
+  }
 
   /**
    * Returns an array of error messages for an attribute, or an empty array
@@ -314,13 +310,13 @@ Errors.prototype = {
    * @param  {string} attribute A key in the data object being validated
    * @return {array} An array of error messages
    */
-  get: function(attribute) {
+  get(attribute) {
     if (this.has(attribute)) {
       return this.errors[attribute];
     }
 
     return [];
-  },
+  }
 
   /**
    * Returns the first error message for an attribute, false otherwise
@@ -328,22 +324,22 @@ Errors.prototype = {
    * @param  {string} attribute A key in the data object being validated
    * @return {string|false} First error message or false
    */
-  first: function(attribute) {
+  first(attribute) {
     if (this.has(attribute)) {
       return this.errors[attribute][0];
     }
 
     return false;
-  },
+  }
 
   /**
    * Get all error messages from all failing attributes
    *
    * @return {Object} Failed attribute names for keys and an array of messages for values
    */
-  all: function() {
+  all() {
     return this.errors;
-  },
+  }
 
   /**
    * Determine if there are any error messages for an attribute
@@ -351,25 +347,20 @@ Errors.prototype = {
    * @param  {string}  attribute A key in the data object being validated
    * @return {boolean}
    */
-  has: function(attribute) {
-    if (this.errors.hasOwnProperty(attribute)) {
-      return true;
-    }
-
-    return false;
+  has(attribute) {
+    // eslint-disable-next-line no-prototype-builtins
+    return this.errors.hasOwnProperty(attribute);
   }
-};
+}
 
 module.exports = Errors;
 
 },{}],4:[function(require,module,exports){
-var Messages = require('./messages');
+const Messages = require('./messages');
 
-require('./lang/en');
+const require_method = require;
 
-var require_method = require;
-
-var container = {
+const container = {
 
   messages: {},
 
@@ -410,9 +401,12 @@ var container = {
   _load: function(lang) {
     if (!this.messages[lang]) {
       try {
-        var rawMessages = require_method('./lang/' + lang);
+        const rawMessages = require_method('./lang/' + lang);
         this._set(lang, rawMessages);
-      } catch (e) {}
+      } catch (e) {
+        const logger = console;
+        logger.error('_load error', e);
+      }
     }
   },
 
@@ -435,6 +429,7 @@ var container = {
    */
   _make: function(lang) {
     this._load(lang);
+
     return new Messages(lang, this.messages[lang]);
   }
 
@@ -442,71 +437,17 @@ var container = {
 
 module.exports = container;
 
-},{"./lang/en":5,"./messages":6}],5:[function(require,module,exports){
-module.exports = {
-  accepted: 'The :attribute must be accepted.',
-  after: 'The :attribute must be after :after.',
-  after_or_equal: 'The :attribute must be equal or after :after_or_equal.',
-  alpha: 'The :attribute field must contain only alphabetic characters.',
-  alpha_dash: 'The :attribute field may only contain alpha-numeric characters, as well as dashes and underscores.',
-  alpha_num: 'The :attribute field must be alphanumeric.',
-  before: 'The :attribute must be before :before.',
-  before_or_equal: 'The :attribute must be equal or before :before_or_equal.',
-  between: {
-    numeric: 'The :attribute field must be between :min and :max.',
-    string: 'The :attribute field must be between :min and :max characters.',
-  },
-  confirmed: 'The :attribute confirmation does not match.',
-  email: 'The :attribute format is invalid.',
-  date: 'The :attribute is not a valid date format.',
-  def: 'The :attribute attribute has errors.',
-  digits: 'The :attribute must be :digits digits.',
-  digits_between: 'The :attribute field must be between :min and :max digits.',
-  different: 'The :attribute and :different must be different.',
-  in: 'The selected :attribute is invalid.',
-  integer: 'The :attribute must be an integer.',
-  hex: 'The :attribute field should have hexadecimal format',
-  min: {
-    numeric: 'The :attribute must be at least :min.',
-    string: 'The :attribute must be at least :min characters.'
-  },
-  max: {
-    numeric: 'The :attribute may not be greater than :max.',
-    string: 'The :attribute may not be greater than :max characters.'
-  },
-  not_in: 'The selected :attribute is invalid.',
-  numeric: 'The :attribute must be a number.',
-  present: 'The :attribute field must be present (but can be empty).',
-  required: 'The :attribute field is required.',
-  required_if: 'The :attribute field is required when :other is :value.',
-  required_unless: 'The :attribute field is required when :other is not :value.',
-  required_with: 'The :attribute field is required when :field is not empty.',
-  required_with_all: 'The :attribute field is required when :fields are not empty.',
-  required_without: 'The :attribute field is required when :field is empty.',
-  required_without_all: 'The :attribute field is required when :fields are empty.',
-  same: 'The :attribute and :same fields must match.',
-  size: {
-    numeric: 'The :attribute must be :size.',
-    string: 'The :attribute must be :size characters.'
-  },
-  string: 'The :attribute must be a string.',
-  url: 'The :attribute format is invalid.',
-  regex: 'The :attribute format is invalid.',
-  attributes: {}
-};
+},{"./messages":5}],5:[function(require,module,exports){
+/* eslint-disable no-prototype-builtins */
+const Attributes = require('./attributes');
 
-},{}],6:[function(require,module,exports){
-var Attributes = require('./attributes');
-
-var Messages = function(lang, messages) {
-  this.lang = lang;
-  this.messages = messages;
-  this.customMessages = {};
-  this.attributeNames = {};
-};
-
-Messages.prototype = {
-  constructor: Messages,
+class Messages {
+  constructor(lang, messages) {
+    this.lang = lang;
+    this.messages = messages;
+    this.customMessages = {};
+    this.attributeNames = {};
+  }
 
   /**
    * Set custom messages
@@ -514,18 +455,18 @@ Messages.prototype = {
    * @param {object} customMessages
    * @return {void}
    */
-  _setCustom: function(customMessages) {
+  _setCustom(customMessages) {
     this.customMessages = customMessages || {};
-  },
+  }
 
   /**
    * Set custom attribute names.
    *
    * @param {object} attributes
    */
-  _setAttributeNames: function(attributes) {
+  _setAttributeNames(attributes) {
     this.attributeNames = attributes;
-  },
+  }
 
   /**
    * Set the attribute formatter.
@@ -533,9 +474,9 @@ Messages.prototype = {
    * @param {fuction} func
    * @return {void}
    */
-  _setAttributeFormatter: function(func) {
+  _setAttributeFormatter(func) {
     this.attributeFormatter = func;
-  },
+  }
 
   /**
    * Get attribute name to display.
@@ -543,8 +484,8 @@ Messages.prototype = {
    * @param  {string} attribute
    * @return {string}
    */
-  _getAttributeName: function(attribute) {
-    var name = attribute;
+  _getAttributeName(attribute) {
+    let name = attribute;
     if (this.attributeNames.hasOwnProperty(attribute)) {
       return this.attributeNames[attribute];
     } else if (this.messages.attributes.hasOwnProperty(attribute)) {
@@ -556,16 +497,16 @@ Messages.prototype = {
     }
 
     return name;
-  },
+  }
 
   /**
    * Get all messages
    *
    * @return {object}
    */
-  all: function() {
+  all() {
     return this.messages;
-  },
+  }
 
   /**
    * Render message
@@ -573,13 +514,13 @@ Messages.prototype = {
    * @param  {Rule} rule
    * @return {string}
    */
-  render: function(rule) {
+  render(rule) {
     if (rule.customMessage) {
       return rule.customMessage;
     }
-    var template = this._getTemplate(rule);
+    const template = this._getTemplate(rule);
 
-    var message;
+    let message;
     if (Attributes.replacements[rule.name]) {
       message = Attributes.replacements[rule.name].apply(this, [template, rule]);
     } else {
@@ -587,7 +528,7 @@ Messages.prototype = {
     }
 
     return message;
-  },
+  }
 
   /**
    * Get the template to use for given rule
@@ -595,14 +536,13 @@ Messages.prototype = {
    * @param  {Rule} rule
    * @return {string}
    */
-  _getTemplate: function(rule) {
+  _getTemplate(rule) {
+    const messages = this.messages;
+    let template = messages.def;
+    const customMessages = this.customMessages;
+    const formats = [rule.name + '.' + rule.attribute, rule.name];
 
-    var messages = this.messages;
-    var template = messages.def;
-    var customMessages = this.customMessages;
-    var formats = [rule.name + '.' + rule.attribute, rule.name];
-
-    for (var i = 0, format; i < formats.length; i++) {
+    for (let i = 0, format; i < formats.length; i++) {
       format = formats[i];
       if (customMessages.hasOwnProperty(format)) {
         template = customMessages[format];
@@ -618,7 +558,7 @@ Messages.prototype = {
     }
 
     return template;
-  },
+  }
 
   /**
    * Replace placeholders in the template using the data object
@@ -628,8 +568,8 @@ Messages.prototype = {
    * @param  {object} data
    * @return {string}
    */
-  _replacePlaceholders: function(rule, template, data) {
-    var message, attribute;
+  _replacePlaceholders(rule, template, data) {
+    let message, attribute;
 
     data.attribute = this._getAttributeName(rule.attribute);
     data[rule.name] = data[rule.name] || rule.getParameters().join(',');
@@ -644,12 +584,11 @@ Messages.prototype = {
 
     return message;
   }
-
-};
+}
 
 module.exports = Messages;
 
-},{"./attributes":2}],7:[function(require,module,exports){
+},{"./attributes":2}],6:[function(require,module,exports){
 
 // https://docs.microsoft.com/en-us/office/troubleshoot/excel/determine-a-leap-year
 function leapYear(year) {
@@ -671,7 +610,6 @@ function checkFalsePositiveDates(dateString = '') {
         let m = parseInt(parts[1]);
         let d = parseInt(parts[2]);
         if (m === 2) {
-          // return leapYear(y) ? d <= 29 : d <= 28;
           if (leapYear(y)) {
             if (d > 29) {
               return false;
@@ -716,33 +654,28 @@ function isValidDate(dateString) {
      * Eg.  let newDate = new Date('2019-02-29')  // returns as March 01 2020
      * Eg.  let newDate = new Date('2019-04-31')  // returns as April 30 2020
      */
-    if (!checkFalsePositiveDates(dateString)) {
-      return false;
-    }
-
-    // valid date object and not a february date
-    return true;
+    return !checkFalsePositiveDates(dateString)? false : true;
   }
 
   // First check for the pattern
-  var regex_date = /^\d{4}\-\d{1,2}\-\d{1,2}$/;
+  const regex_date = /^\d{4}\-\d{1,2}\-\d{1,2}$/;
 
   if (!regex_date.test(dateString)) {
     return false;
   }
 
   // Parse the date parts to integers
-  var parts = dateString.split("-");
-  var day = parseInt(parts[2], 10);
-  var month = parseInt(parts[1], 10);
-  var year = parseInt(parts[0], 10);
+  const parts = dateString.split("-");
+  const day = parseInt(parts[2], 10);
+  const month = parseInt(parts[1], 10);
+  const year = parseInt(parts[0], 10);
 
   // Check the ranges of month and year
   if (year < 1000 || year > 3000 || month == 0 || month > 12) {
     return false;
   }
 
-  var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  const monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
   // Adjust for leap years
   if (year % 400 == 0 || (year % 100 != 0 && year % 4 == 0)) {
@@ -753,9 +686,9 @@ function isValidDate(dateString) {
   return day > 0 && day <= monthLength[month - 1];
 }
 
-var rules = {
+const rules = {
   required: function (val) {
-    var str;
+    let str;
 
     if (val === undefined || val === null) {
       return false;
@@ -765,8 +698,8 @@ var rules = {
     return str.length > 0 ? true : false;
   },
 
-  required_if: function (val, req, attribute) {
-    req = this.getParameters();
+  required_if: function (val, _req, attribute) {
+    const req = this.getParameters();
     if (this.validator._objectPath(this.validator.input, req[0]) === req[1]) {
       return this.validator.getRule("required").validate(val);
     }
@@ -774,8 +707,8 @@ var rules = {
     return true;
   },
 
-  required_unless: function (val, req, attribute) {
-    req = this.getParameters();
+  required_unless: function (val, _req, attribute) {
+    const req = this.getParameters();
     if (this.validator._objectPath(this.validator.input, req[0]) !== req[1]) {
       return this.validator.getRule("required").validate(val);
     }
@@ -791,10 +724,10 @@ var rules = {
     return true;
   },
 
-  required_with_all: function (val, req, attribute) {
-    req = this.getParameters();
+  required_with_all: function (val, _req, attribute) {
+    const req = this.getParameters();
 
-    for (var i = 0; i < req.length; i++) {
+    for (let i = 0; i < req.length; i++) {
       if (!this.validator._objectPath(this.validator.input, req[i])) {
         return true;
       }
@@ -811,10 +744,10 @@ var rules = {
     return this.validator.getRule("required").validate(val);
   },
 
-  required_without_all: function (val, req, attribute) {
-    req = this.getParameters();
+  required_without_all: function (val, _req, attribute) {
+    const req = this.getParameters();
 
-    for (var i = 0; i < req.length; i++) {
+    for (let i = 0; i < req.length; i++) {
       if (this.validator._objectPath(this.validator.input, req[i])) {
         return true;
       }
@@ -838,11 +771,10 @@ var rules = {
 
   // compares the size of strings
   // with numbers, compares the value
-  size: function (val, req, attribute) {
+  size: function (val, _req, attribute) {
     if (val) {
-      req = parseFloat(req);
-
-      var size = this.getSize();
+      const req = parseFloat(_req);
+      const size = this.getSize();
 
       return size === req;
     }
@@ -862,7 +794,7 @@ var rules = {
    * Compares the size of strings or the value of numbers if there is a truthy value
    */
   min: function (val, req, attribute) {
-    var size = this.getSize();
+    const size = this.getSize();
     return size >= req;
   },
 
@@ -870,21 +802,21 @@ var rules = {
    * Compares the size of strings or the value of numbers if there is a truthy value
    */
   max: function (val, req, attribute) {
-    var size = this.getSize();
+    const size = this.getSize();
     return size <= req;
   },
 
-  between: function (val, req, attribute) {
-    req = this.getParameters();
-    var size = this.getSize();
-    var min = parseFloat(req[0], 10);
-    var max = parseFloat(req[1], 10);
+  between: function (val, _req, attribute) {
+    const req = this.getParameters();
+    const size = this.getSize();
+    const min = parseFloat(req[0], 10);
+    const max = parseFloat(req[1], 10);
     return size >= min && size <= max;
   },
 
   email: function (val) {
     // Added umlaut support https://github.com/skaterdav85/validatorjs/issues/308
-    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    let re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (!re.test(val)) {
       // added support domain 3-n level https://github.com/skaterdav85/validatorjs/issues/384
       re = /^((?:[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]|[^\u0000-\u007F])+@(?:[a-zA-Z0-9]|[^\u0000-\u007F])(?:(?:[a-zA-Z0-9-]|[^\u0000-\u007F]){0,61}(?:[a-zA-Z0-9]|[^\u0000-\u007F]))?(?:\.(?:[a-zA-Z0-9]|[^\u0000-\u007F])(?:(?:[a-zA-Z0-9-]|[^\u0000-\u007F]){0,61}(?:[a-zA-Z0-9]|[^\u0000-\u007F]))?)+)*$/;
@@ -893,15 +825,11 @@ var rules = {
   },
 
   numeric: function (val) {
-    var num;
+    let num;
 
     num = Number(val); // tries to convert value to a number. useful if value is coming from form element
 
-    if (typeof num === "number" && !isNaN(num) && typeof val !== "boolean") {
-      return true;
-    } else {
-      return false;
-    }
+    return (typeof num === "number" && !isNaN(num) && typeof val !== "boolean");
   },
 
   array: function (val) {
@@ -925,36 +853,28 @@ var rules = {
   },
 
   same: function (val, req) {
-    var val1 = this.validator._flattenObject(this.validator.input)[req];
-    var val2 = val;
+    const val1 = this.validator._flattenObject(this.validator.input)[req];
+    const val2 = val;
 
-    if (val1 === val2) {
-      return true;
-    }
-
-    return false;
+    return val1 === val2;
   },
 
   different: function (val, req) {
-    var val1 = this.validator._flattenObject(this.validator.input)[req];
-    var val2 = val;
+    const val1 = this.validator._flattenObject(this.validator.input)[req];
+    const val2 = val;
 
-    if (val1 !== val2) {
-      return true;
-    }
-
-    return false;
+    return val1 !== val2;
   },
 
   in: function (val, req) {
-    var list, i;
+    let list, i;
 
     if (val) {
       list = this.getParameters();
     }
 
     if (val && !(val instanceof Array)) {
-      var localValue = val;
+      let localValue = val;
 
       for (i = 0; i < list.length; i++) {
         if (typeof list[i] === "string") {
@@ -981,12 +901,12 @@ var rules = {
   },
 
   not_in: function (val, req) {
-    var list = this.getParameters();
-    var len = list.length;
-    var returnVal = true;
+    const list = this.getParameters();
+    const len = list.length;
+    let returnVal = true;
 
-    for (var i = 0; i < len; i++) {
-      var localValue = val;
+    for (let i = 0; i < len; i++) {
+      let localValue = val;
 
       if (typeof list[i] === "string") {
         localValue = String(val);
@@ -1002,21 +922,13 @@ var rules = {
   },
 
   accepted: function (val) {
-    if (val === "on" || val === "yes" || val === 1 || val === "1" || val === true) {
-      return true;
-    }
-
-    return false;
+    return (val === "on" || val === "yes" || val === 1 || val === "1" || val === true);
   },
 
   confirmed: function (val, req, key) {
-    var confirmedKey = key + "_confirmation";
+    const confirmedKey = key + "_confirmation";
 
-    if (this.validator.input[confirmedKey] === val) {
-      return true;
-    }
-
-    return false;
+    return (this.validator.input[confirmedKey] === val);
   },
 
   integer: function (val) {
@@ -1024,35 +936,27 @@ var rules = {
   },
 
   digits: function (val, req) {
-    var numericRule = this.validator.getRule('numeric');
-    if (numericRule.validate(val) && String(val.trim()).length === parseInt(req)) {
-      return true;
-    }
+    const numericRule = this.validator.getRule('numeric');
 
-    return false;
+    return (numericRule.validate(val) && String(val.trim()).length === parseInt(req));
   },
 
   digits_between: function (val) {
-    var numericRule = this.validator.getRule("numeric");
-    var req = this.getParameters();
-    var valueDigitsCount = String(val).length;
-    var min = parseFloat(req[0], 10);
-    var max = parseFloat(req[1], 10);
+    const numericRule = this.validator.getRule("numeric");
+    const req = this.getParameters();
+    const valueDigitsCount = String(val).length;
+    const min = parseFloat(req[0], 10);
+    const max = parseFloat(req[1], 10);
 
-    if (numericRule.validate(val) && valueDigitsCount >= min && valueDigitsCount <= max) {
-      return true;
-    }
-
-    return false;
+    return (numericRule.validate(val) && valueDigitsCount >= min && valueDigitsCount <= max);
   },
 
-  regex: function (val, req) {
-    let reqPattern = req;
-    var mod = /[g|i|m]{1,3}$/;
-    var flag = req.match(mod);
+  regex: function (val, _req) {
+    const mod = /[g|i|m]{1,3}$/;
+    let flag = _req.match(mod);
     flag = flag ? flag[0] : "";
 
-    req = req.replace(mod, "").slice(1, -1);
+    let req = _req.replace(mod, "").slice(1, -1);
     req = new RegExp(req, flag);
     return !!req.test(val);
   },
@@ -1066,8 +970,8 @@ var rules = {
   },
 
   after: function (val, req) {
-    var val1 = this.validator.input[req];
-    var val2 = val;
+    const val1 = this.validator.input[req];
+    const val2 = val;
 
     if (!isValidDate(val1)) {
       return false;
@@ -1076,16 +980,12 @@ var rules = {
       return false;
     }
 
-    if (new Date(val1).getTime() < new Date(val2).getTime()) {
-      return true;
-    }
-
-    return false;
+    return (new Date(val1).getTime() < new Date(val2).getTime());
   },
 
   after_or_equal: function (val, req) {
-    var val1 = this.validator.input[req];
-    var val2 = val;
+    const val1 = this.validator.input[req];
+    const val2 = val;
 
     if (!isValidDate(val1)) {
       return false;
@@ -1094,16 +994,12 @@ var rules = {
       return false;
     }
 
-    if (new Date(val1).getTime() <= new Date(val2).getTime()) {
-      return true;
-    }
-
-    return false;
+    return (new Date(val1).getTime() <= new Date(val2).getTime()) ;
   },
 
   before: function (val, req) {
-    var val1 = this.validator.input[req];
-    var val2 = val;
+    const val1 = this.validator.input[req];
+    const val2 = val;
 
     if (!isValidDate(val1)) {
       return false;
@@ -1112,16 +1008,12 @@ var rules = {
       return false;
     }
 
-    if (new Date(val1).getTime() > new Date(val2).getTime()) {
-      return true;
-    }
-
-    return false;
+    return (new Date(val1).getTime() > new Date(val2).getTime());
   },
 
   before_or_equal: function (val, req) {
-    var val1 = this.validator.input[req];
-    var val2 = val;
+    const val1 = this.validator.input[req];
+    const val2 = val;
 
     if (!isValidDate(val1)) {
       return false;
@@ -1130,11 +1022,7 @@ var rules = {
       return false;
     }
 
-    if (new Date(val1).getTime() >= new Date(val2).getTime()) {
-      return true;
-    }
-
-    return false;
+    return (new Date(val1).getTime() >= new Date(val2).getTime());
   },
 
   hex: function (val) {
@@ -1146,9 +1034,9 @@ var rules = {
       return false;
 
     // regex to check that each octet is valid
-    var er = /^[0-9]+$/;
+    const er = /^[0-9]+$/;
     // ipv4 octets are delimited by dot
-    octets = val.split('.');
+    const octets = val.split('.');
     // check 1: ipv4 address should contains 4 octets
     if (octets.length != 4)
       return false;
@@ -1160,7 +1048,7 @@ var rules = {
         return false;
 
       // check 3: each octet value should be less than 256
-      var octetValue = parseInt(element);
+      const octetValue = parseInt(element);
       if (octetValue >= 256)
         return false;
     }
@@ -1174,12 +1062,12 @@ var rules = {
       return false;
 
     // regex to check that each hextet is valid
-    var er = /^[0-9a-f]+$/;
+    const er = /^[0-9a-f]+$/;
     // ipv6 hextets are delimited by colon
-    hextets = val.split(':');
+    const hextets = val.split(':');
 
     // check 1: ipv6 should contain only one consecutive colons
-    colons = val.match(/::/);
+    let colons = val.match(/::/);
     if (colons != null && val.match(/::/g).length > 1)
       return false;
 
@@ -1197,7 +1085,7 @@ var rules = {
 
     // check 4: ipv6 should contain no more than 8 sectors
     //         only 1 edge case: when first or last sector is ommited
-    var isEdgeCase = (hextets.length == 9 && colons != null && (colons.index == 0 || colons.index == val.length - 2));
+    const isEdgeCase = (hextets.length == 9 && colons != null && (colons.index == 0 || colons.index == val.length - 2));
     if (hextets.length > 8 && !isEdgeCase)
       return false;
 
@@ -1230,20 +1118,21 @@ var rules = {
 
 };
 
-var missedRuleValidator = function () {
+let missedRuleValidator = function () {
   throw new Error("Validator `" + this.name + "` is not defined!");
 };
-var missedRuleMessage;
 
-function Rule(name, fn, async) {
-  this.name = name;
-  this.fn = fn;
-  this.passes = null;
-  this._customMessage = undefined;
-  this.async = async;
-}
+let missedRuleMessage;
 
-Rule.prototype = {
+class Rule {
+  constructor (name, fn, async) {
+    this.name = name;
+    this.fn = fn;
+    this.passes = null;
+    this._customMessage = undefined;
+    this.async = async;
+  }
+
   /**
    * Validate rule
    *
@@ -1253,12 +1142,12 @@ Rule.prototype = {
    * @param  {function} callback
    * @return {boolean|undefined}
    */
-  validate: function (inputValue, ruleValue, attribute, callback) {
-    var _this = this;
+  validate(inputValue, ruleValue, attribute, callback) {
+    const _this = this;
     this._setValidatingData(attribute, inputValue, ruleValue);
     if (typeof callback === "function") {
       this.callback = callback;
-      var handleResponse = function (passes, message) {
+      const handleResponse = function (passes, message) {
         _this.response(passes, message);
       };
 
@@ -1269,7 +1158,7 @@ Rule.prototype = {
       }
     }
     return this._apply(inputValue, ruleValue, attribute);
-  },
+  }
 
   /**
    * Apply validation function
@@ -1280,11 +1169,11 @@ Rule.prototype = {
    * @param  {function} callback
    * @return {boolean|undefined}
    */
-  _apply: function (inputValue, ruleValue, attribute, callback) {
-    var fn = this.isMissed() ? missedRuleValidator : this.fn;
+  _apply(inputValue, ruleValue, attribute, callback) {
+    const fn = this.isMissed() ? missedRuleValidator : this.fn;
 
     return fn.apply(this, [inputValue, ruleValue, attribute, callback]);
-  },
+  }
 
   /**
    * Set validating data
@@ -1294,19 +1183,19 @@ Rule.prototype = {
    * @param {mixed} ruleValue
    * @return {void}
    */
-  _setValidatingData: function (attribute, inputValue, ruleValue) {
+  _setValidatingData(attribute, inputValue, ruleValue) {
     this.attribute = attribute;
     this.inputValue = inputValue;
     this.ruleValue = ruleValue;
-  },
+  }
 
   /**
    * Get parameters
    *
    * @return {array}
    */
-  getParameters: function () {
-    var value = [];
+  getParameters() {
+    let value = [];
 
     if (typeof this.ruleValue === "string") {
       value = this.ruleValue.split(",");
@@ -1321,15 +1210,15 @@ Rule.prototype = {
     }
 
     return value;
-  },
+  }
 
   /**
    * Get true size of value
    *
    * @return {integer|float}
    */
-  getSize: function () {
-    var value = this.inputValue;
+  getSize() {
+    const value = this.inputValue;
 
     if (value instanceof Array) {
       return value.length;
@@ -1344,20 +1233,20 @@ Rule.prototype = {
     }
 
     return value.length;
-  },
+  }
 
   /**
    * Get the type of value being checked; numeric or string.
    *
    * @return {string}
    */
-  _getValueType: function () {
+  _getValueType() {
     if (typeof this.inputValue === "number" || this.validator._hasNumericRule(this.attribute)) {
       return "numeric";
     }
 
     return "string";
-  },
+  }
 
   /**
    * Set the async callback response
@@ -1366,11 +1255,11 @@ Rule.prototype = {
    * @param  {string|undefined} message Custom error message
    * @return {void}
    */
-  response: function (passes, message) {
+  response(passes, message) {
     this.passes = passes === undefined || passes === true;
     this._customMessage = message;
     this.callback(this.passes, message);
-  },
+  }
 
   /**
    * Set validator instance
@@ -1378,25 +1267,25 @@ Rule.prototype = {
    * @param {Validator} validator
    * @return {void}
    */
-  setValidator: function (validator) {
+  setValidator(validator) {
     this.validator = validator;
-  },
+  }
 
   /**
    * Check if rule is missed
    *
    * @return {boolean}
    */
-  isMissed: function () {
+  isMissed() {
     return typeof this.fn !== "function";
-  },
+  }
 
   get customMessage() {
     return this.isMissed() ? missedRuleMessage : this._customMessage;
   }
-};
+}
 
-var manager = {
+const manager = {
   /**
    * List of async rule names
    *
@@ -1429,8 +1318,8 @@ var manager = {
    * @return {Rule}
    */
   make: function (name, validator) {
-    var async = this.isAsync(name);
-    var rule = new Rule(name, rules[name], async);
+    const async = this.isAsync(name);
+    const rule = new Rule(name, rules[name], async);
     rule.setValidator(validator);
     return rule;
   },
@@ -1442,7 +1331,7 @@ var manager = {
    * @return {boolean}
    */
   isAsync: function (name) {
-    for (var i = 0, len = this.asyncRules.length; i < len; i++) {
+    for (let i = 0, len = this.asyncRules.length; i < len; i++) {
       if (this.asyncRules[i] === name) {
         return true;
       }
@@ -1515,70 +1404,47 @@ var manager = {
 
 module.exports = manager;
 
-},{}],8:[function(require,module,exports){
-var Rules = require('./rules');
-var Lang = require('./lang');
-var Errors = require('./errors');
-var Attributes = require('./attributes');
-var AsyncResolvers = require('./async');
+},{}],7:[function(require,module,exports){
+const Rules = require('./rules');
+const Lang = require('./lang');
+const Errors = require('./errors');
+const Attributes = require('./attributes');
+const AsyncResolvers = require('./async');
 
-var Validator = function (input, rules, customMessages) {
-  var lang = Validator.getDefaultLang();
-  this.input = input || {};
+class Validator {
+  constructor(input, rules, customMessages) {
+    this.lang = 'en';
+    this.numericRules = ['integer', 'numeric'];
+    this.attributeFormatter = Attributes.formatter;
+    const lang = this.constructor.getDefaultLang();
+    this.input = input || {};
 
-  this.messages = Lang._make(lang);
-  this.messages._setCustom(customMessages);
-  this.setAttributeFormatter(Validator.prototype.attributeFormatter);
+    this.messages = Lang._make(lang);
+    this.messages._setCustom(customMessages);
+    this.setAttributeFormatter(this.attributeFormatter);
 
-  this.errors = new Errors();
-  this.errorCount = 0;
+    this.errors = new Errors();
+    this.errorCount = 0;
 
-  this.hasAsync = false;
-  this.rules = this._parseRules(rules);
-};
-
-Validator.prototype = {
-
-  constructor: Validator,
-
-  /**
-   * Default language
-   *
-   * @type {string}
-   */
-  lang: 'en',
-
-  /**
-   * Numeric based rules
-   *
-   * @type {array}
-   */
-  numericRules: ['integer', 'numeric'],
-
-  /**
-   * Attribute formatter.
-   *
-   * @type {function}
-   */
-  attributeFormatter: Attributes.formatter,
+    this.hasAsync = false;
+    this.rules = this._parseRules(rules);
+  }
 
   /**
    * Run validator
    *
    * @return {boolean} Whether it passes; true = passes, false = fails
    */
-  check: function () {
-    var self = this;
-
-    for (var attribute in this.rules) {
-      var attributeRules = this.rules[attribute];
-      var inputValue = this._objectPath(this.input, attribute);
+  check() {
+    for (const attribute in this.rules) {
+      const attributeRules = this.rules[attribute];
+      const inputValue = this._objectPath(this.input, attribute);
 
       if (this._hasRule(attribute, ['sometimes']) && !this._suppliedWithData(attribute)) {
         continue;
       }
 
-      for (var i = 0, len = attributeRules.length, rule, ruleOptions, rulePassed; i < len; i++) {
+      for (let i = 0, len = attributeRules.length, rule, ruleOptions, rulePassed; i < len; i++) {
         ruleOptions = attributeRules[i];
         rule = this.getRule(ruleOptions.name);
 
@@ -1598,7 +1464,7 @@ Validator.prototype = {
     }
 
     return this.errorCount === 0;
-  },
+  }
 
   /**
    * Run async validator
@@ -1607,16 +1473,16 @@ Validator.prototype = {
    * @param {function} fails
    * @return {void}
    */
-  checkAsync: function (passes, fails) {
-    var _this = this;
-    passes = passes || function () {};
-    fails = fails || function () {};
+  checkAsync(passes, fails) {
+    const _this = this;
+    passes = passes || function () { };
+    fails = fails || function () { };
 
-    var failsOne = function (rule, message) {
+    const failsOne = function (rule, message) {
       _this._addFailure(rule, message);
     };
 
-    var resolvedAll = function (allPassed) {
+    const resolvedAll = function (allPassed) {
       if (allPassed) {
         passes();
       } else {
@@ -1624,26 +1490,26 @@ Validator.prototype = {
       }
     };
 
-    var asyncResolvers = new AsyncResolvers(failsOne, resolvedAll);
+    const asyncResolvers = new AsyncResolvers(failsOne, resolvedAll);
 
-    var validateRule = function (inputValue, ruleOptions, attribute, rule) {
+    const validateRule = function (inputValue, ruleOptions, attribute, rule) {
       return function () {
-        var resolverIndex = asyncResolvers.add(rule);
+        const resolverIndex = asyncResolvers.add(rule);
         rule.validate(inputValue, ruleOptions.value, attribute, function () {
           asyncResolvers.resolve(resolverIndex);
         });
       };
     };
 
-    for (var attribute in this.rules) {
-      var attributeRules = this.rules[attribute];
-      var inputValue = this._objectPath(this.input, attribute);
+    for (let attribute in this.rules) {
+      const attributeRules = this.rules[attribute];
+      const inputValue = this._objectPath(this.input, attribute);
 
       if (this._hasRule(attribute, ['sometimes']) && !this._suppliedWithData(attribute)) {
         continue;
       }
 
-      for (var i = 0, len = attributeRules.length, rule, ruleOptions; i < len; i++) {
+      for (let i = 0, len = attributeRules.length, rule, ruleOptions; i < len; i++) {
         ruleOptions = attributeRules[i];
 
         rule = this.getRule(ruleOptions.name);
@@ -1658,18 +1524,18 @@ Validator.prototype = {
 
     asyncResolvers.enableFiring();
     asyncResolvers.fire();
-  },
+  }
 
   /**
    * Add failure and error message for given rule
    *
    * @param {Rule} rule
    */
-  _addFailure: function (rule) {
-    var msg = this.messages.render(rule);
+  _addFailure(rule) {
+    const msg = this.messages.render(rule);
     this.errors.add(rule.attribute, msg);
     this.errorCount++;
-  },
+  }
 
   /**
    * Flatten nested object, normalizing { foo: { bar: 1 } } into: { 'foo.bar': 1 }
@@ -1677,8 +1543,8 @@ Validator.prototype = {
    * @param  {object} nested object
    * @return {object} flattened object
    */
-  _flattenObject: function (obj) {
-    var flattened = {};
+  _flattenObject(obj) {
+    const flattened = {};
 
     function recurse(current, property) {
       if (!property && Object.getOwnPropertyNames(current).length === 0) {
@@ -1687,8 +1553,8 @@ Validator.prototype = {
       if (Object(current) !== current || Array.isArray(current)) {
         flattened[property] = current;
       } else {
-        var isEmpty = true;
-        for (var p in current) {
+        let isEmpty = true;
+        for (const p in current) {
           isEmpty = false;
           recurse(current[p], property ? property + '.' + p : p);
         }
@@ -1701,7 +1567,7 @@ Validator.prototype = {
       recurse(obj);
     }
     return flattened;
-  },
+  }
 
   /**
    * Extract value from nested object using string path with dot notation
@@ -1710,20 +1576,20 @@ Validator.prototype = {
    * @param  {string} path inside object
    * @return {any|void} value under the path
    */
-  _objectPath: function (obj, path) {
+  _objectPath(obj, path) {
     if (Object.prototype.hasOwnProperty.call(obj, path)) {
       return obj[path];
     }
 
-    var keys = path.replace(/\[(\w+)\]/g, '.$1').replace(/^\./, '').split('.');
-    var copy = {};
-    for (var attr in obj) {
+    const keys = path.replace(/\[(\w+)\]/g, '.$1').replace(/^\./, '').split('.');
+    let copy = {};
+    for (const attr in obj) {
       if (Object.prototype.hasOwnProperty.call(obj, attr)) {
         copy[attr] = obj[attr];
       }
     }
 
-    for (var i = 0, l = keys.length; i < l; i++) {
+    for (let i = 0, l = keys.length; i < l; i++) {
       if (typeof copy === 'object' && copy !== null && Object.hasOwnProperty.call(copy, keys[i])) {
         copy = copy[keys[i]];
       } else {
@@ -1731,7 +1597,7 @@ Validator.prototype = {
       }
     }
     return copy;
-  },
+  }
 
   /**
    * Parse rules, normalizing format into: { attribute: [{ name: 'age', value: 3 }] }
@@ -1739,45 +1605,41 @@ Validator.prototype = {
    * @param  {object} rules
    * @return {object}
    */
-  _parseRules: function (rules) {
+  _parseRules(_rules) {
+    const parsedRules = {};
+    const rules = this._flattenObject(_rules);
 
-    var parsedRules = {};
-    rules = this._flattenObject(rules);
-
-    for (var attribute in rules) {
-
-      var rulesArray = rules[attribute];
-
+    for (let attribute in rules) {
+      const rulesArray = rules[attribute];
       this._parseRulesCheck(attribute, rulesArray, parsedRules);
     }
+
     return parsedRules;
+  }
 
-
-  },
-
-  _parseRulesCheck: function (attribute, rulesArray, parsedRules, wildCardValues) {
+  _parseRulesCheck(attribute, rulesArray, parsedRules, wildCardValues) {
     if (attribute.indexOf('*') > -1) {
       this._parsedRulesRecurse(attribute, rulesArray, parsedRules, wildCardValues);
     } else {
       this._parseRulesDefault(attribute, rulesArray, parsedRules, wildCardValues);
     }
-  },
+  }
 
-  _parsedRulesRecurse: function (attribute, rulesArray, parsedRules, wildCardValues) {
-    var parentPath = attribute.substr(0, attribute.indexOf('*') - 1);
-    var propertyValue = this._objectPath(this.input, parentPath);
+  _parsedRulesRecurse(attribute, rulesArray, parsedRules, wildCardValues) {
+    const parentPath = attribute.substr(0, attribute.indexOf('*') - 1);
+    const propertyValue = this._objectPath(this.input, parentPath);
 
     if (propertyValue) {
-      for (var propertyNumber = 0; propertyNumber < propertyValue.length; propertyNumber++) {
-        var workingValues = wildCardValues ? wildCardValues.slice() : [];
+      for (let propertyNumber = 0; propertyNumber < propertyValue.length; propertyNumber++) {
+        const workingValues = wildCardValues ? wildCardValues.slice() : [];
         workingValues.push(propertyNumber);
         this._parseRulesCheck(attribute.replace('*', propertyNumber), rulesArray, parsedRules, workingValues);
       }
     }
-  },
+  }
 
-  _parseRulesDefault: function (attribute, rulesArray, parsedRules, wildCardValues) {
-    var attributeRules = [];
+  _parseRulesDefault(attribute, rulesArray, parsedRules, wildCardValues) {
+    const attributeRules = [];
 
     if (rulesArray instanceof Array) {
       rulesArray = this._prepareRulesArray(rulesArray);
@@ -1787,7 +1649,7 @@ Validator.prototype = {
       rulesArray = rulesArray.split('|');
     }
 
-    for (var i = 0, len = rulesArray.length, rule; i < len; i++) {
+    for (let i = 0, len = rulesArray.length, rule; i < len; i++) {
       rule = typeof rulesArray[i] === 'string' ? this._extractRuleAndRuleValue(rulesArray[i]) : rulesArray[i];
       if (rule.value) {
         rule.value = this._replaceWildCards(rule.value, wildCardValues);
@@ -1801,17 +1663,17 @@ Validator.prototype = {
     }
 
     parsedRules[attribute] = attributeRules;
-  },
+  }
 
-  _replaceWildCards: function (path, nums) {
+  _replaceWildCards(path, nums) {
 
     if (!nums) {
       return path;
     }
 
-    var path2 = path;
+    let path2 = path;
     nums.forEach(function (value) {
-      if(Array.isArray(path2)){
+      if (Array.isArray(path2)) {
         path2 = path2[0];
       }
       const pos = path2.indexOf('*');
@@ -1820,37 +1682,37 @@ Validator.prototype = {
       }
       path2 = path2.substr(0, pos) + value + path2.substr(pos + 1);
     });
-    if(Array.isArray(path)){
+    if (Array.isArray(path)) {
       path[0] = path2;
       path2 = path;
     }
     return path2;
-  },
+  }
 
-  _replaceWildCardsMessages: function (nums) {
-    var customMessages = this.messages.customMessages;
-    var self = this;
+  _replaceWildCardsMessages(nums) {
+    const customMessages = this.messages.customMessages;
+    let self = this;
     Object.keys(customMessages).forEach(function (key) {
       if (nums) {
-        var newKey = self._replaceWildCards(key, nums);
+        const newKey = self._replaceWildCards(key, nums);
         customMessages[newKey] = customMessages[key];
       }
     });
 
     this.messages._setCustom(customMessages);
-  },
+  }
   /**
    * Prepare rules if it comes in Array. Check for objects. Need for type validation.
    *
    * @param  {array} rulesArray
    * @return {array}
    */
-  _prepareRulesArray: function (rulesArray) {
-    var rules = [];
+  _prepareRulesArray(rulesArray) {
+    const rules = [];
 
-    for (var i = 0, len = rulesArray.length; i < len; i++) {
+    for (let i = 0, len = rulesArray.length; i < len; i++) {
       if (typeof rulesArray[i] === 'object') {
-        for (var rule in rulesArray[i]) {
+        for (let rule in rulesArray[i]) {
           rules.push({
             name: rule,
             value: rulesArray[i][rule]
@@ -1862,7 +1724,7 @@ Validator.prototype = {
     }
 
     return rules;
-  },
+  }
 
   /**
    * Determines if the attribute is supplied with the original data object.
@@ -1870,9 +1732,10 @@ Validator.prototype = {
    * @param  {array} attribute
    * @return {boolean}
    */
-  _suppliedWithData: function (attribute) {
+  _suppliedWithData(attribute) {
+    // eslint-disable-next-line no-prototype-builtins
     return this.input.hasOwnProperty(attribute);
-  },
+  }
 
   /**
    * Extract a rule and a value from a ruleString (i.e. min:3), rule = min, value = 3
@@ -1880,8 +1743,8 @@ Validator.prototype = {
    * @param  {string} ruleString min:3
    * @return {object} object containing the name of the rule and value
    */
-  _extractRuleAndRuleValue: function (ruleString) {
-    var rule = {},
+  _extractRuleAndRuleValue(ruleString) {
+    let rule = {},
       ruleArray;
 
     rule.name = ruleString;
@@ -1893,7 +1756,7 @@ Validator.prototype = {
     }
 
     return rule;
-  },
+  }
 
   /**
    * Determine if attribute has any of the given rules
@@ -1902,15 +1765,16 @@ Validator.prototype = {
    * @param  {array}   findRules
    * @return {boolean}
    */
-  _hasRule: function (attribute, findRules) {
-    var rules = this.rules[attribute] || [];
-    for (var i = 0, len = rules.length; i < len; i++) {
+  _hasRule(attribute, findRules) {
+    const rules = this.rules[attribute] || [];
+    for (let i = 0, len = rules.length; i < len; i++) {
       if (findRules.indexOf(rules[i].name) > -1) {
         return true;
       }
     }
+
     return false;
-  },
+  }
 
   /**
    * Determine if attribute has any numeric-based rules.
@@ -1918,9 +1782,9 @@ Validator.prototype = {
    * @param  {string}  attribute
    * @return {Boolean}
    */
-  _hasNumericRule: function (attribute) {
+  _hasNumericRule(attribute) {
     return this._hasRule(attribute, this.numericRules);
-  },
+  }
 
   /**
    * Determine if rule is validatable
@@ -1929,7 +1793,7 @@ Validator.prototype = {
    * @param  {mixed}  value
    * @return {boolean}
    */
-  _isValidatable: function (rule, value) {
+  _isValidatable(rule, value) {
     if (Array.isArray(value)) {
       return true;
     }
@@ -1938,7 +1802,7 @@ Validator.prototype = {
     }
 
     return this.getRule('required').validate(value);
-  },
+  }
 
   /**
    * Determine if we should stop validating.
@@ -1947,9 +1811,8 @@ Validator.prototype = {
    * @param  {boolean} rulePassed
    * @return {boolean}
    */
-  _shouldStopValidating: function (attribute, rulePassed) {
-
-    var stopOnAttributes = this.stopOnAttributes;
+  _shouldStopValidating(attribute, rulePassed) {
+    const stopOnAttributes = this.stopOnAttributes;
     if (typeof stopOnAttributes === 'undefined' || stopOnAttributes === false || rulePassed === true) {
       return false;
     }
@@ -1959,7 +1822,7 @@ Validator.prototype = {
     }
 
     return true;
-  },
+  }
 
   /**
    * Set custom attribute names.
@@ -1967,9 +1830,9 @@ Validator.prototype = {
    * @param {object} attributes
    * @return {void}
    */
-  setAttributeNames: function (attributes) {
+  setAttributeNames(attributes) {
     this.messages._setAttributeNames(attributes);
-  },
+  }
 
   /**
    * Set the attribute formatter.
@@ -1977,9 +1840,9 @@ Validator.prototype = {
    * @param {fuction} func
    * @return {void}
    */
-  setAttributeFormatter: function (func) {
+  setAttributeFormatter(func) {
     this.messages._setAttributeFormatter(func);
-  },
+  }
 
   /**
    * Get validation rule
@@ -1987,9 +1850,9 @@ Validator.prototype = {
    * @param  {string} name
    * @return {Rule}
    */
-  getRule: function (name) {
+  getRule(name) {
     return Rules.make(name, this);
-  },
+  }
 
   /**
    * Stop on first error.
@@ -1997,9 +1860,9 @@ Validator.prototype = {
    * @param  {boolean|array} An array of attributes or boolean true/false for all attributes.
    * @return {void}
    */
-  stopOnError: function (attributes) {
+  stopOnError(attributes) {
     this.stopOnAttributes = attributes;
-  },
+  }
 
   /**
    * Determine if validation passes
@@ -2007,13 +1870,13 @@ Validator.prototype = {
    * @param {function} passes
    * @return {boolean|undefined}
    */
-  passes: function (passes) {
-    var async = this._checkAsync('passes', passes);
+  passes(passes) {
+    const async = this._checkAsync('passes', passes);
     if (async) {
       return this.checkAsync(passes);
     }
     return this.check();
-  },
+  }
 
   /**
    * Determine if validation fails
@@ -2021,13 +1884,13 @@ Validator.prototype = {
    * @param {function} fails
    * @return {boolean|undefined}
    */
-  fails: function (fails) {
-    var async = this._checkAsync('fails', fails);
+  fails(fails) {
+    const async = this._checkAsync('fails', fails);
     if (async) {
-      return this.checkAsync(function () {}, fails);
+      return this.checkAsync(function () { }, fails);
     }
     return !this.check();
-  },
+  }
 
   /**
    * Check if validation should be called asynchronously
@@ -2036,148 +1899,148 @@ Validator.prototype = {
    * @param  {function} callback
    * @return {boolean}
    */
-  _checkAsync: function (funcName, callback) {
-    var hasCallback = typeof callback === 'function';
+  _checkAsync(funcName, callback) {
+    const hasCallback = typeof callback === 'function';
     if (this.hasAsync && !hasCallback) {
-      throw funcName + ' expects a callback when async rules are being tested.';
+      throw new Error(`${funcName} expects a callback when async rules are being tested.`);
     }
 
     return this.hasAsync || hasCallback;
   }
 
-};
-
-/**
+  /**
  * Set messages for language
  *
  * @param {string} lang
  * @param {object} messages
  * @return {this}
  */
-Validator.setMessages = function (lang, messages) {
-  Lang._set(lang, messages);
-  return this;
-};
+  static setMessages(lang, messages) {
+    Lang._set(lang, messages);
+    return this;
+  }
 
-/**
- * Get messages for given language
- *
- * @param  {string} lang
- * @return {Messages}
- */
-Validator.getMessages = function (lang) {
-  return Lang._get(lang);
-};
+  /**
+   * Get messages for given language
+   *
+   * @param  {string} lang
+   * @return {Messages}
+   */
+  static getMessages(lang) {
+    return Lang._get(lang);
+  }
 
-/**
- * Set default language to use
- *
- * @param {string} lang
- * @return {void}
- */
-Validator.useLang = function (lang) {
-  this.prototype.lang = lang;
-};
+  /**
+   * Set default language to use
+   *
+   * @param {string} lang
+   * @return {void}
+   */
+  static useLang(lang) {
+    this.lang = lang;
+  }
 
-/**
- * Get default language
- *
- * @return {string}
- */
-Validator.getDefaultLang = function () {
-  return this.prototype.lang;
-};
+  /**
+   * Get default language
+   *
+   * @return {string}
+   */
+  static getDefaultLang() {
+    return this.lang || 'en';
+  }
 
-/**
- * Set the attribute formatter.
- *
- * @param {fuction} func
- * @return {void}
- */
-Validator.setAttributeFormatter = function (func) {
-  this.prototype.attributeFormatter = func;
-};
+  /**
+   * Set the attribute formatter.
+   *
+   * @param {fuction} func
+   * @return {void}
+   */
+  static setAttributeFormatter(func) {
+    this.attributeFormatter = func;
+  }
 
-/**
- * Stop on first error.
- *
- * @param  {boolean|array} An array of attributes or boolean true/false for all attributes.
- * @return {void}
- */
-Validator.stopOnError = function (attributes) {
-  this.prototype.stopOnAttributes = attributes;
-};
+  /**
+   * Stop on first error.
+   *
+   * @param  {boolean|array} An array of attributes or boolean true/false for all attributes.
+   * @return {void}
+   */
+  static stopOnError(attributes) {
+    this.stopOnAttributes = attributes;
+  }
 
-/**
- * Register custom validation rule
- *
- * @param  {string}   name
- * @param  {function} fn
- * @param  {string}   message
- * @return {void}
- */
-Validator.register = function (name, fn, message, fnReplacement) {
-  var lang = Validator.getDefaultLang();
-  Rules.register(name, fn);
-  Lang._setRuleMessage(lang, name, message);
-};
+  /**
+   * Register custom validation rule
+   *
+   * @param  {string}   name
+   * @param  {function} fn
+   * @param  {string}   message
+   * @return {void}
+   */
+  static register(name, fn, message, fnReplacement) {
+    const lang = this.getDefaultLang();
+    Rules.register(name, fn);
+    Lang._setRuleMessage(lang, name, message);
+  }
 
-/**
- * Register custom validation rule
- *
- * @param  {string}   name
- * @param  {function} fn
- * @param  {string}   message
- * @param  {function} fnReplacement
- * @return {void}
- */
-Validator.registerImplicit = function (name, fn, message, fnReplacement) {
-  var lang = Validator.getDefaultLang();
-  Rules.registerImplicit(name, fn);
-  Lang._setRuleMessage(lang, name, message);
-};
+  /**
+   * Register custom validation rule
+   *
+   * @param  {string}   name
+   * @param  {function} fn
+   * @param  {string}   message
+   * @param  {function} fnReplacement
+   * @return {void}
+   */
+  static registerImplicit(name, fn, message, fnReplacement) {
+    const lang = this.getDefaultLang();
+    Rules.registerImplicit(name, fn);
+    Lang._setRuleMessage(lang, name, message);
+  }
 
-/**
- * Register asynchronous validation rule
- *
- * @param  {string}   name
- * @param  {function} fn
- * @param  {string}   message
- * @return {void}
- */
-Validator.registerAsync = function (name, fn, message, fnReplacement) {
-  var lang = Validator.getDefaultLang();
-  Rules.registerAsync(name, fn);
-  Lang._setRuleMessage(lang, name, message);
-};
+  /**
+   * Register asynchronous validation rule
+   *
+   * @param  {string}   name
+   * @param  {function} fn
+   * @param  {string}   message
+   * @return {void}
+   */
+  static registerAsync(name, fn, message, fnReplacement) {
+    const lang = this.getDefaultLang();
+    Rules.registerAsync(name, fn);
+    Lang._setRuleMessage(lang, name, message);
+  }
 
-/**
- * Register asynchronous validation rule
- *
- * @param  {string}   name
- * @param  {function} fn
- * @param  {string}   message
- * @return {void}
- */
-Validator.registerAsyncImplicit = function (name, fn, message) {
-  var lang = Validator.getDefaultLang();
-  Rules.registerAsyncImplicit(name, fn);
-  Lang._setRuleMessage(lang, name, message);
-};
+  /**
+   * Register asynchronous validation rule
+   *
+   * @param  {string}   name
+   * @param  {function} fn
+   * @param  {string}   message
+   * @return {void}
+   */
+  static registerAsyncImplicit(name, fn, message) {
+    const lang = this.getDefaultLang();
+    Rules.registerAsyncImplicit(name, fn);
+    Lang._setRuleMessage(lang, name, message);
+  }
 
-/**
- * Register validator for missed validation rule
- *
- * @param  {string}   name
- * @param  {function} fn
- * @param  {string}   message
- * @return {void}
- */
-Validator.registerMissedRuleValidator = function(fn, message) {
-  Rules.registerMissedRuleValidator(fn, message);
-};
+  /**
+   * Register validator for missed validation rule
+   *
+   * @param  {string}   name
+   * @param  {function} fn
+   * @param  {string}   message
+   * @return {void}
+   */
+  static registerMissedRuleValidator(fn, message) {
+    Rules.registerMissedRuleValidator(fn, message);
+  }
+}
+
 
 module.exports = Validator;
 
-},{"./async":1,"./attributes":2,"./errors":3,"./lang":4,"./rules":7}]},{},[8])(8)
+},{"./async":1,"./attributes":2,"./errors":3,"./lang":4,"./rules":6}]},{},[7])(7)
 });

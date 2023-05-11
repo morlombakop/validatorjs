@@ -1,4 +1,4 @@
-var replacements = {
+const replacements = {
 
   /**
    * Between replacement (replaces :min and :max)
@@ -7,8 +7,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  between: function(template, rule) {
-    var parameters = rule.getParameters();
+  between: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       min: parameters[0],
       max: parameters[1]
@@ -22,8 +22,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  digits_between: function(template, rule) {
-    var parameters = rule.getParameters();
+  digits_between: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       min: parameters[0],
       max: parameters[1]
@@ -37,8 +37,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  required_if: function(template, rule) {
-    var parameters = rule.getParameters();
+  required_if: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       other: this._getAttributeName(parameters[0]),
       value: parameters[1]
@@ -52,8 +52,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  required_unless: function(template, rule) {
-    var parameters = rule.getParameters();
+  required_unless: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       other: this._getAttributeName(parameters[0]),
       value: parameters[1]
@@ -67,8 +67,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  required_with: function(template, rule) {
-    var parameters = rule.getParameters();
+  required_with: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       field: this._getAttributeName(parameters[0])
     });
@@ -81,9 +81,9 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  required_with_all: function(template, rule) {
-    var parameters = rule.getParameters();
-    var getAttributeName = this._getAttributeName.bind(this);
+  required_with_all: function (template, rule) {
+    const parameters = rule.getParameters();
+    const getAttributeName = this._getAttributeName.bind(this);
     return this._replacePlaceholders(rule, template, {
       fields: parameters.map(getAttributeName).join(', ')
     });
@@ -96,8 +96,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  required_without: function(template, rule) {
-    var parameters = rule.getParameters();
+  required_without: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       field: this._getAttributeName(parameters[0])
     });
@@ -110,9 +110,9 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  required_without_all: function(template, rule) {
-    var parameters = rule.getParameters();
-    var getAttributeName = this._getAttributeName.bind(this);
+  required_without_all: function (template, rule) {
+    const parameters = rule.getParameters();
+    const getAttributeName = this._getAttributeName.bind(this);
     return this._replacePlaceholders(rule, template, {
       fields: parameters.map(getAttributeName).join(', ')
     });
@@ -125,8 +125,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  after: function(template, rule) {
-    var parameters = rule.getParameters();
+  after: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       after: this._getAttributeName(parameters[0])
     });
@@ -139,8 +139,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  before: function(template, rule) {
-    var parameters = rule.getParameters();
+  before: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       before: this._getAttributeName(parameters[0])
     });
@@ -153,8 +153,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  after_or_equal: function(template, rule) {
-    var parameters = rule.getParameters();
+  after_or_equal: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       after_or_equal: this._getAttributeName(parameters[0])
     });
@@ -167,8 +167,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  before_or_equal: function(template, rule) {
-    var parameters = rule.getParameters();
+  before_or_equal: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       before_or_equal: this._getAttributeName(parameters[0])
     });
@@ -181,8 +181,8 @@ var replacements = {
    * @param  {Rule} rule
    * @return {string}
    */
-  same: function(template, rule) {
-    var parameters = rule.getParameters();
+  same: function (template, rule) {
+    const parameters = rule.getParameters();
     return this._replacePlaceholders(rule, template, {
       same: this._getAttributeName(parameters[0])
     });

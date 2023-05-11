@@ -33,6 +33,7 @@ describe("accepted validation rule", function() {
 
   it("should fail if the value is not 1, on, or yes", function() {
     const validator = new Validator({ terms: "10" }, { terms: "accepted" });
+    Validator.useLang('en');
     expect(validator.passes()).to.be.false;
     expect(validator.fails()).to.be.true;
   });

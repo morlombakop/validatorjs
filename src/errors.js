@@ -1,9 +1,7 @@
-var Errors = function() {
-  this.errors = {};
-};
-
-Errors.prototype = {
-  constructor: Errors,
+class Errors {
+  constructor() {
+    this.errors = {};
+  }
 
   /**
    * Add new error message for given attribute
@@ -12,7 +10,7 @@ Errors.prototype = {
    * @param  {string} message
    * @return {void}
    */
-  add: function(attribute, message) {
+  add(attribute, message) {
     if (!this.has(attribute)) {
       this.errors[attribute] = [];
     }
@@ -20,7 +18,7 @@ Errors.prototype = {
     if (this.errors[attribute].indexOf(message) === -1) {
       this.errors[attribute].push(message);
     }
-  },
+  }
 
   /**
    * Returns an array of error messages for an attribute, or an empty array
@@ -28,13 +26,13 @@ Errors.prototype = {
    * @param  {string} attribute A key in the data object being validated
    * @return {array} An array of error messages
    */
-  get: function(attribute) {
+  get(attribute) {
     if (this.has(attribute)) {
       return this.errors[attribute];
     }
 
     return [];
-  },
+  }
 
   /**
    * Returns the first error message for an attribute, false otherwise
@@ -42,22 +40,22 @@ Errors.prototype = {
    * @param  {string} attribute A key in the data object being validated
    * @return {string|false} First error message or false
    */
-  first: function(attribute) {
+  first(attribute) {
     if (this.has(attribute)) {
       return this.errors[attribute][0];
     }
 
     return false;
-  },
+  }
 
   /**
    * Get all error messages from all failing attributes
    *
    * @return {Object} Failed attribute names for keys and an array of messages for values
    */
-  all: function() {
+  all() {
     return this.errors;
-  },
+  }
 
   /**
    * Determine if there are any error messages for an attribute
@@ -65,13 +63,10 @@ Errors.prototype = {
    * @param  {string}  attribute A key in the data object being validated
    * @return {boolean}
    */
-  has: function(attribute) {
-    if (this.errors.hasOwnProperty(attribute)) {
-      return true;
-    }
-
-    return false;
+  has(attribute) {
+    // eslint-disable-next-line no-prototype-builtins
+    return this.errors.hasOwnProperty(attribute);
   }
-};
+}
 
 module.exports = Errors;
