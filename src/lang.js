@@ -1,8 +1,6 @@
 const Messages = require('./messages');
 const en = require('./lang/en');
 
-const require_method = require;
-
 const container = {
 
   messages: {},
@@ -48,7 +46,7 @@ const container = {
         rawMessages = require('./lang/' + lang);
       } catch (e) {
         const logger = console;
-        logger.error('_load error ****', e);
+        logger.warn('Failed to load requested message: ', lang, '. Thrown error: ', e, '. Falling back to english');
       }
 
       const mes = rawMessages ? rawMessages : en;
