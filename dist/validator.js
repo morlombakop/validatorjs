@@ -1,4 +1,4 @@
-/*! validatorjs - 2023-05-11 */
+/*! validatorjs - 2023-05-15 */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Validator = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 class AsyncResolvers {
   constructor(onFailedOne, onResolvedAll) {
@@ -357,8 +357,7 @@ module.exports = Errors;
 
 },{}],4:[function(require,module,exports){
 const Messages = require('./messages');
-
-const require_method = require;
+const en = require('./lang/en');
 
 const container = {
 
@@ -400,13 +399,16 @@ const container = {
    */
   _load: function(lang) {
     if (!this.messages[lang]) {
+      let rawMessages;
       try {
-        const rawMessages = require_method('./lang/' + lang);
-        this._set(lang, rawMessages);
+        rawMessages = require('./lang/' + lang);
       } catch (e) {
-        const logger = console;
-        logger.error('_load error', e);
+        // const logger = console;
+        // logger.warn('Failed to load requested message: ', lang, '. Thrown error: ', e, '. Falling back to english');
       }
+
+      const mes = rawMessages ? rawMessages : en;
+      this._set(lang, mes);
     }
   },
 
@@ -437,7 +439,60 @@ const container = {
 
 module.exports = container;
 
-},{"./messages":5}],5:[function(require,module,exports){
+},{"./lang/en":5,"./messages":6}],5:[function(require,module,exports){
+module.exports = {
+  accepted: 'The :attribute must be accepted.',
+  after: 'The :attribute must be after :after.',
+  after_or_equal: 'The :attribute must be equal or after :after_or_equal.',
+  alpha: 'The :attribute field must contain only alphabetic characters.',
+  alpha_dash: 'The :attribute field may only contain alpha-numeric characters, as well as dashes and underscores.',
+  alpha_num: 'The :attribute field must be alphanumeric.',
+  before: 'The :attribute must be before :before.',
+  before_or_equal: 'The :attribute must be equal or before :before_or_equal.',
+  between: {
+    numeric: 'The :attribute field must be between :min and :max.',
+    string: 'The :attribute field must be between :min and :max characters.',
+  },
+  confirmed: 'The :attribute confirmation does not match.',
+  email: 'The :attribute format is invalid.',
+  date: 'The :attribute is not a valid date format.',
+  def: 'The :attribute attribute has errors.',
+  digits: 'The :attribute must be :digits digits.',
+  digits_between: 'The :attribute field must be between :min and :max digits.',
+  different: 'The :attribute and :different must be different.',
+  in: 'The selected :attribute is invalid.',
+  integer: 'The :attribute must be an integer.',
+  hex: 'The :attribute field should have hexadecimal format',
+  min: {
+    numeric: 'The :attribute must be at least :min.',
+    string: 'The :attribute must be at least :min characters.'
+  },
+  max: {
+    numeric: 'The :attribute may not be greater than :max.',
+    string: 'The :attribute may not be greater than :max characters.'
+  },
+  not_in: 'The selected :attribute is invalid.',
+  numeric: 'The :attribute must be a number.',
+  present: 'The :attribute field must be present (but can be empty).',
+  required: 'The :attribute field is required.',
+  required_if: 'The :attribute field is required when :other is :value.',
+  required_unless: 'The :attribute field is required when :other is not :value.',
+  required_with: 'The :attribute field is required when :field is not empty.',
+  required_with_all: 'The :attribute field is required when :fields are not empty.',
+  required_without: 'The :attribute field is required when :field is empty.',
+  required_without_all: 'The :attribute field is required when :fields are empty.',
+  same: 'The :attribute and :same fields must match.',
+  size: {
+    numeric: 'The :attribute must be :size.',
+    string: 'The :attribute must be :size characters.'
+  },
+  string: 'The :attribute must be a string.',
+  url: 'The :attribute format is invalid.',
+  regex: 'The :attribute format is invalid.',
+  attributes: {}
+};
+
+},{}],6:[function(require,module,exports){
 /* eslint-disable no-prototype-builtins */
 const Attributes = require('./attributes');
 
@@ -588,7 +643,7 @@ class Messages {
 
 module.exports = Messages;
 
-},{"./attributes":2}],6:[function(require,module,exports){
+},{"./attributes":2}],7:[function(require,module,exports){
 
 // https://docs.microsoft.com/en-us/office/troubleshoot/excel/determine-a-leap-year
 function leapYear(year) {
@@ -1404,7 +1459,7 @@ const manager = {
 
 module.exports = manager;
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 const Rules = require('./rules');
 const Lang = require('./lang');
 const Errors = require('./errors');
@@ -2042,5 +2097,5 @@ class Validator {
 
 module.exports = Validator;
 
-},{"./async":1,"./attributes":2,"./errors":3,"./lang":4,"./rules":6}]},{},[7])(7)
+},{"./async":1,"./attributes":2,"./errors":3,"./lang":4,"./rules":7}]},{},[8])(8)
 });

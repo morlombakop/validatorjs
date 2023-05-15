@@ -45,8 +45,8 @@ const container = {
       try {
         rawMessages = require('./lang/' + lang);
       } catch (e) {
-        const logger = console;
-        logger.warn('Failed to load requested message: ', lang, '. Thrown error: ', e, '. Falling back to english');
+        // const logger = console;
+        // logger.warn('Failed to load requested message: ', lang, '. Thrown error: ', e, '. Falling back to english');
       }
 
       const mes = rawMessages ? rawMessages : en;
